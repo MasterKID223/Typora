@@ -44,4 +44,6 @@
 
 ### 把笔记同步到Ubuntu上
 
-按照相同的额步骤，建立Ubuntu上的仓库，并把github上的仓库clone下来。
+- 按照相同的额步骤，建立Ubuntu上的仓库，并把github上的仓库clone下来。
+
+- 然后使用`git push`和`git pull`命令实现两个电脑之间的笔记同步和更新。
