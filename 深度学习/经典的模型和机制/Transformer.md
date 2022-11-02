@@ -114,3 +114,35 @@ $$
 作者使用了h=8，即8个头。
 
 因为有残差连接的存在，需要输入和输出是一样的，所以在每个头的输出，需要把 $d_k = d_v = d_{model}/h = 64$，然后在concat一起，投影回来。
+
+###### 3.2.3 Applications of Attention in our Model
+
+![image-20221102150354391](./pic/image-20221102150354391.png)
+
+
+
+##### 3.3 Position-wise Feed-Forward Networks
+
+MLP，把MLP对每个点(即输入的词)作用一次，MLP每次都一样
+$$
+FFN(x) = max(0， xW1 + b1)W2 + b2
+$$
+其中，x是512维的，W1把它转换成2048维，W2又把它转换回512维，相当于一个单隐层的MLP。
+
+![image-20221102151754142](./pic/image-20221102151754142.png)
+
+
+
+##### 3.4 Embeddings and Softmax
+
+在encoder和decoder之后，经过embedding层，把输入和输出的tokens转换为 $d_{model} = 512$ 的向量。在我们的模型中，两个embedding层和softmax之前的线性层共享一个权重矩阵。在embedding层，权值还要乘 $\sqrt{d_{model}}$。
+
+<font color=red>为什么要乘这样一个参数？</font>~~因为在学embedding的时候，多多少少会把每个向量的L2 long学成相对比较小的长度~~ 
+
+##### 3.5 Positional Encoding
+
+为了让模型利用序列的顺序信息，我们必须把tokens的相对或者绝对位置信息，加入到encoder和decoder块的最下面，维度和embeddings的维度一样 $d_{model}$ 。
+
+![image-20221102200854031](./pic/image-20221102200854031.png)
+
+$pos$ 是位置，$i$ 是维度。也就是说，每个位置编码的每个维度都对应于正弦曲线。正弦曲线的波长是一个几何过程，从 $2\pi$ 到 $10000 \cdot 2\pi$。我们之所以使用这个函数是因为，我们假设这个函数允许模型能够简单的学到相对位置，因此，对于一个固定的偏移 $k$ ，$PE_{pos + k}$ 就可以用关于 $PE_{pos}$ 的线性函数来表示。

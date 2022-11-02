@@ -18,7 +18,7 @@ $$
 $$
 
 $$
-\overline{m}_j = m_j + \dfrac{1}{N_j-1}[y-m_j]
+\overline{m}_j = m_j + \dfrac{1}{N_j+1}[y-m_j]
 $$
 
 $$
