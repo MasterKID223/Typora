@@ -12,6 +12,12 @@
 
 
 
+### 1-3 介绍了Transformer
+
+
+
+![image-20221103162928223](.pic/image-20221103162928223.png)
+
 
 
 #### 4.2 Attention Module
@@ -130,7 +136,7 @@ GTA包含图卷积结构来建模影响传播过程(l the influence propagation 
 
 **GTN**使用一个two-tower的Transformers ，tower分别是：time-step-wise的attention和channel-wise的attention。为了合并和两个tower输出的特征，使用一个可学习的权重concat(也称为"gating")。在13个多变量时间序列分类上达到了SOT。
 
-[Rußwurm and Korner, 2020 ]研究了基于Transformer的方法，用于原始光学卫星raw optical satellite的时序分类，达到了最好的结果，和CNN，RNN相比。
+[Rußwurm and Korner, 2020 ]研究了基于Transformer的方法，用于原始光学卫星(raw optical satellite)的时序分类，达到了最好的结果，和CNN，RNN相比。
 
 **Pre-trained Transformers**在分类问题上也能用。
 
