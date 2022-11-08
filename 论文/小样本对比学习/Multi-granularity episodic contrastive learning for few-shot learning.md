@@ -28,7 +28,7 @@ FSL现在存在的两个问题：
 - class-granularity contrastive loss：不同类prototype之间的损失。
 - instance-granularity contrastive loss：同一类内不同样本之间的损失。
 
-![image-20221108033026302](.pic/image-20221108033026302.png)
+![image-20221108033026302](./pic/image-20221108033026302.png)
 
 ### 3 方法
 
@@ -55,7 +55,7 @@ $\mathcal{L}_{\mathrm{CE}}$ 是交叉熵损失。训练完固定网络的参数 
 
 整体流程：
 
-![image-20221108033208121](.pic/image-20221108033208121.png)
+![image-20221108033208121](./pic/image-20221108033208121.png)
 
 ##### 3.3.1. Class-granularity contrastive loss
 

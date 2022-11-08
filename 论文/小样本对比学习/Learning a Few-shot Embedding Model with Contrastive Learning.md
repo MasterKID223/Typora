@@ -23,8 +23,6 @@
 
 ### 介绍
 
-Protonet提出了episode的训来方式。
-
 此外，原则上，embedding不应该通过存储的训练数据来学习source class的归纳偏差，因为这可能会破坏这种embedding的泛化性能。
 
 目前对比学习的关键是，选择更好的正负样本对。
@@ -50,6 +48,8 @@ Protonet提出了episode的训来方式。
 基本的小样本分类问题，把数据分成训练，验证，测试集。做5-way 1-shot和5-way 5-shot的任务。query images的数量是 $n_q$ 。
 
 ##### Baseline
+
+[few-shot baseline，Am](https://github.com/amazon-science/few-shot-baseline/)
 
 使用监督与训练重建baseline：[An Embarrassingly Simple Baseline to One-Shot Learning.(2020 IEEE/CVF)](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w54/Liu_An_Embarrassingly_Simple_Baseline_to_One-Shot_Learning_CVPRW_2020_paper.pdf)，[A baseline for few-shot image classification.(ICLR,2020)](https://arxiv.org/abs/1909.02729)。上述两篇论文中，作者猜测监督预训练在FSL上的效果会非常好。特别地，上述这些方法通常在source classes上用一个分类器(交叉熵损失)训练网络。网络用于提取target classes中的特征。由于方法比较简单，这篇文章使用上述的工作作为baseline。
 
@@ -135,3 +135,55 @@ Patch和Cutmix的区别在mix之后。Cutmix之后使用交叉熵损失训练。
 - Implementation details
 
   ResNet12是模型结构(细节：[TADAM: Task dependent adaptive metric for improved few-shot learning](https://arxiv.org/abs/1805.10123))。初始化模型：[he-nomal何凯明](Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification)。SGD，初始lr=0.1，miniImageNet在12000,14000,16000个episode下降，tieredImageNet每24000减半。所有实验都测试了2000个episode。训练时，每个batch，4个episode。
+
+
+
+### 代码(MiniImageNet)
+
+main.py的命令行选项：
+
+运行：`...`
+
+```json
+// 数据集
+-d/--dataset: 'miniImageNet',
+-load: '是否已经加载了图片'
+-j/--workers: 4,
+--height: 84,
+--width: 84,
+
+// 优化器
+--lr: 0.1,
+--weight-decay: 5e-04,
+--max-epoch: 90,
+--start-epoch: 0, // 用来恢复训练
+--stepsize: [60], // 衰减lr的位置
+--LUT_lr: [(60, 0.1), (70, 0.006), (80, 0.0012), (90, 0.00024)], // 衰减多次lr
+--train-batch: 4,
+--test-batch:4,
+
+// 结构设置
+--num_classes: 64,
+--scale_cls:7,
+
+// 路径
+--save-dir: './mini_final_5shot/',
+--resume: '',
+--gpu-devices: 0,
+
+// FSL设置
+--nKnovel: 5,	// novel class的数量
+--nExemplars: 1,  // 每个novel class中训练样本的数量
+--train_nTestNovel: 6*5, // 训练时，所有novel class的测试样本数(每个novek class6个样本)
+--train_epoch_size: 1200, // 训练时，每个epoch中，batches的数量
+--nTestNovel: 15*5, // 所有novel class的测试样本数
+--epoch_size: 2000, // 每个epoch中，tasks的数量
+
+
+```
+
+
+
+1. **加载数据**
+
+   
