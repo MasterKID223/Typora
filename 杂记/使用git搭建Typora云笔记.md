@@ -16,7 +16,7 @@
 
    在windows上打开windows terminal，输入`ssh`，ssh窗口打开后，输入`ssh-keygen -o`，设置公钥的保存地址，默认是`/c/Users/lenovo/.ssh/id_rsa.pub`。
 
-   ![image-20220923171905960](.\使用git搭建Typora云笔记.assets\image-20220923171905960.png)
+   ![image-20220923171905960](./pic/image-20220923171905960.png)
 
 2. 把公钥复制到github上
 
