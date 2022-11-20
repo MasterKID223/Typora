@@ -76,7 +76,7 @@ $\Phi$ 是embedding网络(ResNet12)。embedding网络的输入输出的张量形
 
 对每个query样本 $x_i^q$ ，support set同类是正样本，不同类的是负样本。query 和 support 使用相同的embedding 网络 $\Phi$ 。
 
-一个query样本 $x_i^q$ 的infoNCE：
+<span id='local_loss'>第 $i$ 个query样本 $x_i^q$ 的infoNCE：</span>
 $$
 L_i = - \log  \frac{\sum\limits_{y_j^s = y_i^q} e^{f_j^s f_i^q}}{\sum\limits_{y_j^s = y_i^q} e^{f_j^s f_i^q} + \sum\limits_{y_k^s \neq y_i^q} e^{f_k^s f_i^q}} \\
 \tag{1}
@@ -125,6 +125,62 @@ $$
 Patch和Cutmix的区别在mix之后。Cutmix之后使用交叉熵损失训练。PatchMix进行对比学习，并为每个patch分配了label。
 
 
+
+#### 两个loss的代码实现
+
+- 第一个loss：
+
+  把support和query set进行cat操作之后，送进embedding network（resnet12），然后把得到的嵌入向量（support+query）送进线性分类器（Conv2d或者Linear实现都行），得到分类分数，然后送进损失计算函数（patch_loss_global）。
+
+  在进行交叉熵计算时，先做了如下操作：
+
+  - 把input展平，(140, 64, 11, 11) -> (16940, 64)
+  - target：把suport和query的标签分别展平，并cat到一起，(4,5) (4,30,11,11)  -> (4,5,11,11) (14520)  -> (2420) + (14520) -> (16940）
+
+  然后计算CrossEntropyLoss(input, target)。
+
+  特点：计算了query中所有mix之后每个grid（11 x 11）的交叉熵损失。<font color=#87CEFA>计算过程中，support里的样本也参与了计算（前4x5x11x11=2420），但是support并没有经过patchmix和block处理，即support里的grid的标签还是原图像的标签。</font>
+
+- 第二个loss：
+
+  这个实现和第一个loss函数里面的实现一样，不过这个里面只算了query的交叉熵损失。
+
+  但是在送进损失计算（path_loss_local）之前，在模型的forward的时候要做如下操作，来得到[上述损失](#local_loss)中的两个矩阵相乘的结果：
+
+  - （reform）先把support set的维度扩展到和query set一样，为了计算后面query和prototype相似度时，维度一样
+  - 构建对比损失infoNCE前，要先把输入归一化
+  - 把归一化后的support和query向量相乘，然后在dim=3维相加，把512维消掉，目的是匹配标签的size
+  - scale_cls=7值是计算网络输出的一个常数，其他地方没有用到。
+
+  这里support是经过block处理的，后面计算损失时，query经过了patchmix。
+
+  对比损失infoNCE的计算可以解释为：
+
+  ```python
+  # 记query和support prototype的距离为dist
+  dist = ftest_norm * ftrain_norm
+  ```
+
+  
+  $$
+  L_i = - \log  \frac{\sum\limits_{y_j^s = y_i^q} e^{f_j^s f_i^q}}{\sum\limits_{y_j^s = y_i^q} e^{f_j^s f_i^q} + \sum\limits_{y_k^s \neq y_i^q} e^{f_k^s f_i^q}} \\
+  \tag{1}
+  $$
+  那么根据dist和当前query的标签值：
+  $$
+  记dist_{i} = f^s_j f^q_j，即query离得最近的prototype，	\\
+  记dist_{all}是和所有prototype的距离。	\\
+  那么一个query的损失	\\
+  L_i = -\log \frac{e^{dist_i}}{\sum dist_{all}}
+  $$
+  
+  代码实现就是：
+  
+  ```python
+  loss_local = CrossEntropyLoss(距离矩阵, labels)	# 交叉熵会根据label选择离的最近的索引
+  ```
+  
+  
 
 ### 实验
 
@@ -199,3 +255,21 @@ main.py的命令行选项：
 ![2022-11-08_18-17](./pic/2022-11-08_18-17.png)
 
 ![](./pic/2022-11-08_18-58-1667963058287-1.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+![image-20221117225825716](./pic/image-20221117225825716.png)
+
+![image-20221117225915437](./pic/image-20221117225915437.png)
+
+![image-20221117225937849](./pic/image-20221117225937849.png)
