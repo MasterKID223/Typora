@@ -51,7 +51,13 @@
 
 [few-shot baseline，Am](https://github.com/amazon-science/few-shot-baseline/)
 
-使用监督与训练重建baseline：[An Embarrassingly Simple Baseline to One-Shot Learning.(2020 IEEE/CVF)](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w54/Liu_An_Embarrassingly_Simple_Baseline_to_One-Shot_Learning_CVPRW_2020_paper.pdf)，[A baseline for few-shot image classification.(ICLR,2020)](https://arxiv.org/abs/1909.02729)。上述两篇论文中，作者猜测监督预训练在FSL上的效果会非常好。特别地，上述这些方法通常在source classes上用一个分类器(交叉熵损失)训练网络。网络用于提取target classes中的特征。由于方法比较简单，这篇文章使用上述的工作作为baseline。
+使用监督与训练重建baseline：[An Embarrassingly Simple Baseline to One-Shot Learning.(2020 CVPR)](https://openaccess.thecvf.com/content_CVPRW_2020/papers/w54/Liu_An_Embarrassingly_Simple_Baseline_to_One-Shot_Learning_CVPRW_2020_paper.pdf)，[A baseline for few-shot image classification.(ICLR,2020)](https://arxiv.org/abs/1909.02729)。上述两篇论文中，作者猜测监督预训练在FSL上的效果会非常好。特别地，上述这些方法通常在source classes上用一个分类器(交叉熵损失)训练网络。网络用于提取target classes中的特征。由于方法比较简单，这篇文章使用上述的工作作为baseline。
+
+- 上述两篇论文中的损失
+
+  - An Embarrassingly Simple Baseline to One-shot Learning（同一个作者）
+
+    
 
 ##### InfoPatch
 
@@ -180,7 +186,23 @@ Patch和Cutmix的区别在mix之后。Cutmix之后使用交叉熵损失训练。
   loss_local = CrossEntropyLoss(距离矩阵, labels)	# 交叉熵会根据label选择离的最近的索引
   ```
   
-  
+
+
+
+#### 准确率的计算
+
+testloader：2000*16（16：support 1张 + query 15张）
+
+在test过程中，模型做完reform操作之后，就单独进入模型的test逻辑。
+
+- model: forward_test
+  - 对query做GAP
+  - 对support和query做归一化
+  - 和上述损失一样，返回query和prototype的距离
+
+- 每10个epoch对2000个任务里的acc取平均，当作每10个epoch的准确率
+
+
 
 ### 实验
 
