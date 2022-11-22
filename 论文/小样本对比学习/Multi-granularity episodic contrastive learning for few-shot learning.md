@@ -154,4 +154,73 @@ $$
 
 - class_gra_loss
 
-  1
+  ```python
+  # 1-shot
+  def loss_class_gra(model_out, support_labels, query_labels, args):
+      support_features = model_out[:args['way']]  # (5,640)
+      query_features = model_out[args['way']:]    # (75,640)
+      # prototypes = support_features
+      '''构建triple tuple(query, 同类proto, 多个不同类proto)'''
+      triple_list = []
+      for i in range(query_features.shape[0]):
+          # 为第i个query构建三元组
+          label_query_i = query_labels[i]
+          same_support_index = support_labels[label_query_i == support_labels]
+          not_same_support_index = support_labels[label_query_i != support_labels]
+          query_i = query_features[i].reshape(1, query_features.shape[1])
+          triple_tuple = torch.cat([query_i, support_features[same_support_index], 				           support_features[not_same_support_index]], dim=0)  # (6,640)
+          triple_list.append(triple_tuple)
+      triple_stack = torch.stack(triple_list, dim=0)  # (75,6,640)
+      '''计算损失,三元组的第一项是query，第二项是同类proto，接下来的四项是不同类proto'''
+      alpha = args['loss_class_gra_alpha']
+      loss_i_list = []
+      for i in range(triple_stack.shape[0]):
+          query, same, not_same = triple_stack[i][0], triple_stack[i][1], triple_stack[i][2:]
+          loss_i = torch.matmul(query, same.T) + torch.matmul(query, not_same.T) + alpha
+          loss_i = torch.sum(loss_i[loss_i > 0])
+          loss_i_list.append(loss_i)
+      loss = torch.sum(torch.tensor(loss_i_list))
+      return loss
+  ```
+
+- loss_instance_gra
+
+  论文[SimCLR](https://arxiv.org/pdf/2002.05709.pdf)中的DA具体操作是：在进行对比损失（infoNCE）计算之前，不要当前的样本 $x$ 了，只要它的两个DA版本 $\tilde{x}_i,\tilde{x}_j$ ，把一个大小为N的batch变成 2N，在这2N个样本上，两两做infoNCE计算。
+
+  那么，在本篇论文的小样本对比学习代码实现中，暂定这样的步骤：
+
+  - 得到一个 5-way 1-shot 的任务
+
+  - 根据论文中的框架图，不忽略的当前的样本 $x^s_i$ ，额外SimCLR中的DA方法复制5个版本 $\tilde{x}_i*5$ 。
+
+  - 每个类都做上一步的操作，那么一个 5-way 1-shot 的support set最后的组成是：
+    $$
+    support\ set = 
+    \begin{cases}
+    0:x_0, \tilde{x}_0*5	\\
+    1:x_1, \tilde{x}_1*5	\\
+    ...	\\
+    4:x_4, \tilde{x}_4*5
+    \end{cases}
+    $$
+
+  拿第1个类里的样本计算infoNCE的就是（$\exp,\tau$ 省略没写，）：
+  $$
+  \mathcal{L}_{s_1} = -\log \frac{sim(x_1, \tilde{x}_1*5)}
+  	{sim(x_0, \tilde{x}_0*5) + sim(x_1, \tilde{x}_1*5) + ...+ sim(x_4, \tilde{x}_4*5)}
+  $$
+  那么一个 5-way 1-shot 的任务的损失就是：
+  $$
+  \mathcal{L}_{instance-gra} = \mathcal{L}_{s_0} + \mathcal{L}_{s_1} + ...+ \mathcal{L}_{s_4}
+  $$
+
+  - 代码实现
+
+    ```python
+    
+    ```
+
+    
+
+  
+
