@@ -80,6 +80,12 @@ $$
 
 样本 $x^s_i$ 的所有正样本就是本身和其DA版本，所有负样本是除此之外的所有样本和它们的DA版本。 
 
+<font color= #87CEFA>是不是可以把上面的损失优化成：</font>
+$$
+\mathcal{L}_{instance-gra} = - \sum\limits^{|S|}_i \sum\limits_{j \in \{i_+\}} \log \frac{\exp(sim(z^s_i, z_j) / \tau)}{\sum_{k \in \{i_+\} \cup \{i_-\}}\exp(sim(z^s_i, z_j) / \tau)}	\tag{4}
+$$
+
+
 ##### 3.3.3. Overall objective
 
 ![image-20221108040606372](pic/image-20221108040606372.png)
@@ -127,6 +133,7 @@ $$
 
   ```json
   SGD一样
+  lr = 5e-4
   N-way k-shot 15query
   // instance-granularity
   DA(SimCLR): random crop, color jittering, random horizontal flip and random grayscale conversion
@@ -137,9 +144,9 @@ $$
   // final loss function
   λ = 1.0
   ```
-
+  
   **meta-testing**
-
+  
   使用l2归一化的特征训练线性分类器。
 
 ###  结论
