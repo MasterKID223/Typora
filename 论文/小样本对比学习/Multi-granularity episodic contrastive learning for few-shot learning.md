@@ -221,7 +221,7 @@ $$
   \mathcal{L}_{instance-gra} = \mathcal{L}_{s_0} + \mathcal{L}_{s_1} + ...+ \mathcal{L}_{s_4}
   $$
 
-  - 代码实现
+  - 代码实现（参考SimCLR的损失实现）
 
     ```python
     
@@ -231,3 +231,6 @@ $$
 
   
 
+- 验证过程LR分类器的实现
+  - 手写线性层
+  - 使用sklearn.linear_model的LogisticRegression：[embarrassingly-simple-baseline中LR的实现](https://github.com/corwinliu9669/embarrassingly-simple-baseline/blob/master/test_pretrain_model_with_prune.py#L109)
