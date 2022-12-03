@@ -223,10 +223,12 @@ $$
 
   - 代码实现（参考SimCLR的损失实现）
 
+    使用相似矩阵。similarity_matirx
+    
     ```python
     
     ```
-
+    
     
 
   
@@ -234,3 +236,19 @@ $$
 - 验证过程LR分类器的实现
   - 手写线性层
   - 使用sklearn.linear_model的LogisticRegression：[embarrassingly-simple-baseline中LR的实现](https://github.com/corwinliu9669/embarrassingly-simple-baseline/blob/master/test_pretrain_model_with_prune.py#L109)
+
+### 代码实现过程中遇到的问题
+
+- 加载了RFS里面的预训练模型之后，网络损失不下降。
+
+  在损失反向传播时，到resnet12的第4个layer的第一个卷积层，梯度几乎为0。
+
+  ![image-20221129162225831](.pic/image-20221129162225831.png)
+
+- 参考[A Baseline for Few-shot Image Classification](/home/mkid/桌面/A/论文/对比小样本学习/A Baseline for Few-shot Image Classification.pdf)中的代码，重新训练resnet12。
+
+- 参考RFS[10]中的代码，先训练RFS中的模型，先把梯度降下来再说。
+
+  RFS和本篇论文中的不同：
+
+  - 微调的时候RFS用的交叉熵
