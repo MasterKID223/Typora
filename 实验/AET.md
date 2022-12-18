@@ -20,7 +20,9 @@ disc + ViT-1，准确率是disc计算的，infonce的实现是把所有同类和
 
 <img src="./pic/image-20221214212039985.png" alt="image-20221214212039985" style="zoom:50%;" />
 
-<img src="./pic/image-20221214212144971.png" alt="image-20221214212144971"  />
+<img src="./pic/image-20221214212144971.png" alt="image-20221214212144971" style="zoom:33%;" />
+
+<img src="./pic/image-20221218164243518.png" alt="image-20221218164243518" style="zoom:33%;" />
 
 出现nan的可能原因：[[知乎](https://zhuanlan.zhihu.com/p/89588946)]
 

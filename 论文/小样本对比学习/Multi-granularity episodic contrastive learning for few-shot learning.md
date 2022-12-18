@@ -243,7 +243,7 @@ $$
 
   在损失反向传播时，到resnet12的第4个layer的第一个卷积层，梯度几乎为0。
 
-  ![image-20221129162225831](.pic/image-20221129162225831.png)
+  <img src="./pic/image-20221129162225831.png" alt="image-20221129162225831" style="zoom:25%;" />
 
 - 参考[A Baseline for Few-shot Image Classification](/home/mkid/桌面/A/论文/对比小样本学习/A Baseline for Few-shot Image Classification.pdf)中的代码，重新训练resnet12。
 
