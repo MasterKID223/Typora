@@ -30,3 +30,7 @@ $$
 ##### 修改字体大小
 
 ![Typora设置文字属性](pic/format,png.png)
+
+##### 箭头上加字
+
+$0\stackrel{a}{\longrightarrow}1$
