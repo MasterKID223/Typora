@@ -42,9 +42,24 @@ disc + ViT-1，准确率是disc计算的，infonce的实现是把所有同类和
 
 ViT改为6层，输出的特征改成(128,1)，准确率不计算。
 
-<img src="./pic/image-20221215151203938.png" alt="image-20221215151203938"  />
+<img src="./pic/image-20221215151203938.png" alt="image-20221215151203938" style="zoom: 33%;" />
 
-<img src="./pic/image-20221215151217963.png" alt="image-20221215151217963"  />
+<img src="./pic/image-20221215151217963.png" alt="image-20221215151217963" style="zoom: 33%;" />
 
 再上面实验的基础上加了discriminator，用来计算准确率
 
+### 2023.01.12
+
+AE结构换成了VIT，decoder共享权重
+
+<img src="./pic/image-20230112143929381.png" alt="image-20230112143929381" style="zoom:50%;" />
+
+<img src="./pic/image-20230112144022780.png" alt="image-20230112144022780" style="zoom:50%;" />
+
+AE结构换成了VIT，decoder不共享权重
+
+
+
+
+
+参考标准MAE，在encoder之前就做mask，decoder用mask_token恢复维度
