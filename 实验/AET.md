@@ -50,16 +50,22 @@ ViT改为6层，输出的特征改成(128,1)，准确率不计算。
 
 ### 2023.01.12
 
+网络结构
+
+<img src="./pic/image-20230114171432827.png" alt="image-20230114171432827" style="zoom:25%;" />
+
 AE结构换成了VIT，decoder共享权重
 
-<img src="./pic/image-20230112143929381.png" alt="image-20230112143929381" style="zoom:50%;" />
+<img src="./pic/image-20230112143929381.png" alt="image-20230112143929381" style="zoom: 33%;" />
 
-<img src="./pic/image-20230112144022780.png" alt="image-20230112144022780" style="zoom:50%;" />
+<img src="./pic/image-20230112144022780.png" alt="image-20230112144022780" style="zoom: 33%;" />
 
 AE结构换成了VIT，decoder不共享权重
 
+<img src="./pic/image-20230114161702433.png" alt="image-20230114161702433" style="zoom:33%;" />
+
+<img src="./pic/image-20230114161720884.png" alt="image-20230114161720884" style="zoom:33%;" />
 
 
 
-
-参考标准MAE，在encoder之前就做mask，decoder用mask_token恢复维度
+参考标准MAE，在encoder时添加mask，位置编码采用timm默认的可学习的nn.Parameter初始化。两个decoder的输入是一样的。
