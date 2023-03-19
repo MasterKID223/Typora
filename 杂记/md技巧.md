@@ -34,3 +34,12 @@ $$
 ##### 箭头上加字
 
 $0\stackrel{a}{\longrightarrow}1$
+
+
+
+
+
+```python
+print('lzh')
+```
+
