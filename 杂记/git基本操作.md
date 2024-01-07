@@ -13,7 +13,7 @@
 
 下图展示了 Git 的工作流程：
 
-<img src="./pic/git-process.png" alt="img" style="zoom:33%;" />
+<img src="./pic/git-process.png" alt="img"  />
 
 ### Git创建仓库
 
